@@ -1,0 +1,36 @@
+server:
+  port: 8179
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: ead-api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth-user-service
+          uri: lb://ead-auth-user-service
+          predicates:
+            - Path=/ead-auth-user/**
+        - id: course-service
+          uri: lb://ead-course-service
+          predicates:
+            - Path=/ead-course/**
+        - id: notification-service
+          uri: lb://ead-notification-service
+          predicates:
+            - Path=/ead-notification/**
+
+ead:
+  service-registry:
+    username: "serviceregistry"
+    password: "ead123sr"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: "http://${ead.service-registry.username}:${ead.service-registry.password}@localhost:8761/eureka"
+  instance:
+    hostname: localhost
